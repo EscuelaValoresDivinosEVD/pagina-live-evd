@@ -11,6 +11,8 @@ type Props = {
   source: string;
 };
 
+const IFRAME_NAME = "evd_anchor_podcast_iframe";
+
 function formatDate(value: string) {
   if (!value) return "";
   try {
@@ -24,21 +26,21 @@ function formatDate(value: string) {
   }
 }
 
+function showEmbedUrl() {
+  return `${siteConfig.anchorSiteUrl.replace(/\/$/, "")}/embed`;
+}
+
 export function PodcastEpisodes({ episodes, source }: Props) {
   const list = useMemo(
     () => (episodes ?? []).slice(0, siteConfig.anchorMaxEpisodes),
     [episodes],
   );
-  const defaultEmbed =
-    list[0]?.embedUrl || `${siteConfig.anchorSiteUrl}/embed`;
-  const [activeId, setActiveId] = useState(list[0]?.id ?? null);
-  const [iframeSrc, setIframeSrc] = useState(defaultEmbed);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [iframeSrc, setIframeSrc] = useState(showEmbedUrl);
 
   const playEpisode = (episode: PodcastEpisode) => {
-    const next =
-      episode.embedUrl ||
-      episode.link ||
-      `${siteConfig.anchorSiteUrl}/embed`;
+    // Igual que el plugin WP: carga el embed del episodio en el iframe del show
+    const next = episode.embedUrl || showEmbedUrl();
     setActiveId(episode.id);
     setIframeSrc(next);
   };
@@ -46,18 +48,21 @@ export function PodcastEpisodes({ episodes, source }: Props) {
   return (
     <div id="podcast" className="scroll-mt-24 w-full">
       <div className="overflow-hidden rounded-[14px] bg-white text-[#282f36] shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
-        <div className="border-b border-black/5 bg-[#f7f8fa]">
+        {/* Contenedor del player: altura fija + sin scroll interno */}
+        <div className="h-[102px] overflow-hidden border-b border-black/5 bg-[#f7f8fa]">
           <iframe
             key={iframeSrc}
+            name={IFRAME_NAME}
             src={iframeSrc}
             title="Podcast Anchor · Meditaciones Guiadas"
-            className="h-[175px] w-full"
+            className="block h-[102px] w-full border-0"
+            scrolling="no"
             loading="lazy"
             allow="autoplay; encrypted-media; clipboard-write"
           />
         </div>
 
-        <ul className="max-h-[420px] divide-y divide-black/5 overflow-y-auto">
+        <ul className="divide-y divide-black/5">
           {list.map((episode) => {
             const active = episode.id === activeId;
             return (
