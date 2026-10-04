@@ -25,10 +25,10 @@ export default async function HomePage() {
       <SiteHeader />
       <main className="flex-1">
         <HeroIntro />
-        <MatajiSection />
-        <div className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
+        <div className="pb-10 md:pb-14">
           <LivePlayer initialStatus={liveStatus} />
         </div>
+        <MatajiSection />
         <MeditationPosts
           posts={meditations.posts}
           source={meditations.source}

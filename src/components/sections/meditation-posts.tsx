@@ -29,14 +29,14 @@ export function MeditationPosts({ posts, source }: Props) {
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <p className="mb-3 text-xs font-medium tracking-[0.28em] text-[#d4a85a] uppercase">
+            <p className="mb-3 text-xs font-medium tracking-[0.28em] text-[#69e5e7] uppercase">
               shaktianandama.com
             </p>
-            <h2 className="font-heading text-3xl text-[#f7f1e6] md:text-4xl">
-              Últimas meditaciones escritas
+            <h2 className="text-3xl font-light tracking-[0.08em] text-[#e0d9cc] md:text-4xl">
+              Meditaciones con Mataji Shaktiananda
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-[#d7cbb8] md:text-base">
-              Los 4 posts más recientes del archivo de meditaciones de Mataji
+              Leer Meditaciones — los posts más recientes del archivo de Mataji
               Shaktiananda.
             </p>
           </div>
@@ -44,7 +44,7 @@ export function MeditationPosts({ posts, source }: Props) {
             href={siteConfig.meditationsArchiveUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-sm tracking-[0.16em] text-[#d4a85a] uppercase transition hover:text-[#f0d59a]"
+            className="text-sm tracking-[0.16em] text-[#69e5e7] uppercase transition hover:text-[#a4e5e8]"
           >
             Ver archivo →
           </a>
@@ -57,7 +57,7 @@ export function MeditationPosts({ posts, source }: Props) {
               href={post.url}
               target="_blank"
               rel="noreferrer"
-              className="group flex flex-col overflow-hidden border border-white/10 bg-[#0d1b2b]/55 transition hover:border-[#d4a85a]/45"
+              className="group flex flex-col overflow-hidden rounded-[15px] border border-white/10 bg-[#0d1b2b]/55 transition hover:border-[#69e5e7]/45"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
@@ -69,10 +69,10 @@ export function MeditationPosts({ posts, source }: Props) {
                 />
               </div>
               <div className="flex flex-1 flex-col p-4">
-                <p className="text-xs tracking-[0.14em] text-[#d4a85a] uppercase">
+                <p className="text-xs tracking-[0.14em] text-[#69e5e7] uppercase">
                   {formatDate(post.date)}
                 </p>
-                <h3 className="font-heading mt-2 text-xl leading-snug text-[#f7f1e6]">
+                <h3 className="mt-2 text-xl leading-snug font-light text-[#e0d9cc]">
                   {post.title}
                 </h3>
                 <p className="mt-2 line-clamp-3 text-sm text-[#cbbda8]">

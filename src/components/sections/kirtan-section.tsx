@@ -1,30 +1,62 @@
+import Image from "next/image";
+
+const activities = [
+  {
+    title: "Hanuman Chalisa",
+    time: "6pm (COL-ECU)",
+    image: "/chalisa.jpg",
+    href: "https://escuelavaloresdivinos.org/chalisa",
+  },
+  {
+    title: "Medita junto a Mataji Shaktiananda",
+    time: "6:30pm (COL-ECU)",
+    image: "/Medita-junto-a-Mataji.jpg",
+    href: "https://escuelavaloresdivinos.org/medita/",
+  },
+  {
+    title: "Kirtan & Fuego Sagrado",
+    time: "6:30pm (COL-ECU)",
+    image: "/fuego-sagrado-1.jpg",
+    href: "https://escuelavaloresdivinos.org/fuegosagrado",
+  },
+];
+
 export function KirtanSection() {
   return (
-    <section className="border-t border-white/10 py-16 md:py-20">
+    <section className="border-t border-white/5 py-16 md:py-20">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <div className="relative overflow-hidden rounded-sm border border-white/10 bg-[linear-gradient(135deg,#142033,#0b1624_55%,#1b140c)] px-6 py-12 md:px-12 md:py-16">
-          <div className="absolute -right-10 -bottom-16 h-56 w-56 rounded-full bg-[#d4a85a]/15 blur-3xl" />
-          <div className="relative max-w-2xl">
-            <p className="mb-3 text-xs font-medium tracking-[0.28em] text-[#d4a85a] uppercase">
-              Práctica
-            </p>
-            <h2 className="font-heading text-3xl text-[#f7f1e6] md:text-4xl">
-              Kirtan & Fuego Sagrado
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-[#d7cbb8] md:text-base">
-              Espacios de canto devocional y Homa Vidya que acompañan el camino
-              de Shiva Kriya Yoga. Consulta horarios en tus sedes EVD y
-              conéctate a las transmisiones cuando se anuncien en vivo.
-            </p>
+        <h2 className="mb-10 text-center text-2xl font-light tracking-[0.18em] text-[#e0d9cc] uppercase md:text-3xl">
+          Próximas actividades
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {activities.map((item) => (
             <a
-              href="https://escuelavaloresdivinos.org/medita/"
+              key={item.title}
+              href={item.href}
               target="_blank"
               rel="noreferrer"
-              className="mt-6 inline-flex text-sm tracking-[0.16em] text-[#d4a85a] uppercase transition hover:text-[#f0d59a]"
+              className="group overflow-hidden rounded-[15px] border border-white/10 bg-[#0a1423]/40 transition hover:border-[#69e5e7]/40"
             >
-              Ver horarios →
+              <div className="relative aspect-square overflow-hidden">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
+              <div className="space-y-2 p-5 text-center">
+                <h3 className="text-lg font-light leading-snug text-[#e0d9cc]">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-[#69e5e7]">{item.time}</p>
+                <span className="inline-block pt-1 text-xs tracking-[0.16em] text-[#a4e5e8] uppercase">
+                  Saber más →
+                </span>
+              </div>
             </a>
-          </div>
+          ))}
         </div>
       </div>
     </section>

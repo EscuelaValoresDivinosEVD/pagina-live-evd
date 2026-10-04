@@ -18,18 +18,16 @@ export function SubscribeEmbed() {
     >
       <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
         <div className="mb-8 text-center">
-          <p className="mb-3 text-xs font-medium tracking-[0.28em] text-[#d4a85a] uppercase">
-            Comunidad EVD
-          </p>
           <h2
             id="suscribete-heading"
-            className="font-heading text-3xl text-[#f7f1e6] md:text-4xl"
+            className="text-3xl font-light tracking-[0.12em] text-[#e0d9cc] uppercase md:text-4xl"
           >
             Suscríbete
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#d7cbb8] md:text-base">
-            Recibe avisos de transmisiones en vivo, meditaciones y actividades
-            de la Escuela Valores Divinos.
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#e0d4c0] md:text-base">
+            Suscríbete para recibir notificaciones de próximas actividades,
+            novedades y recibir en tu correo la meditación para su lectura y
+            estudio. Pronto podrás acceder a nuevos materiales y enseñanzas.
           </p>
         </div>
 
