@@ -8,36 +8,40 @@ export function MatajiSection() {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="relative overflow-hidden py-10 md:py-16">
-      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <div className="grid items-center gap-6 md:grid-cols-[1.05fr_0.95fr] md:gap-2 lg:gap-6">
-          <div className="relative mx-auto aspect-[1086/1186] w-[min(100%,560px)] md:w-full md:max-w-none">
-            <Image
-              src="/fondo-Ma.jpg"
-              alt="Mataji Shaktiananda"
-              fill
-              className="object-contain object-center md:object-left"
-              sizes="(max-width: 768px) 90vw, 52vw"
-              priority={false}
-            />
-          </div>
+    <section
+      aria-label="Mataji Shaktiananda"
+      className="relative isolate overflow-hidden border-t border-[#387799]/25 bg-[linear-gradient(90deg,#0a1423_22%,#231724_93%)]"
+    >
+      {/* Imagen de fondo de la sección (capa absoluta, no columna) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
+        <Image
+          src="/fondo-Ma.jpg"
+          alt=""
+          fill
+          className="object-cover object-[12%_center] opacity-95 sm:object-contain sm:object-left [mask-image:linear-gradient(90deg,black_0%,black_40%,transparent_86%)]"
+          sizes="100vw"
+          priority={false}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_22%_48%,rgba(140,150,190,0.16),transparent_52%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_30%,rgba(10,20,35,0.55)_58%,#0a1423_78%,#231724_100%)]" />
+      </div>
 
-          <div className="relative z-10 flex flex-col items-center justify-center px-2 text-center md:-ml-10 lg:-ml-20">
-            <div className="font-heading max-w-xl space-y-1 text-[clamp(1.1rem,1.85vw,1.65rem)] leading-[1.55] text-[#e0d3ba]">
-              <p>“¿Qué o quién es un meditador?</p>
-              <p>Quien a través de sí mismo busca encontrarse.</p>
-              <p>Quien sabe habita aquí y allá, y busca unirse.</p>
-              <p>Quien sabe que su Ser lo contiene todo”.</p>
-            </div>
+      <div className="relative z-10 mx-auto flex min-h-[70vw] w-full max-w-6xl flex-col justify-center px-4 py-16 sm:px-6 md:min-h-[520px] md:py-24 lg:min-h-[600px]">
+        <div className="ml-auto w-full max-w-xl text-center md:max-w-[48%] lg:max-w-[44%]">
+          <div className="font-heading space-y-1 text-[clamp(1.15rem,2vw,1.7rem)] leading-[1.55] text-[#e0d3ba]">
+            <p>“¿Qué o quién es un meditador?</p>
+            <p>Quien a través de sí mismo busca encontrarse.</p>
+            <p>Quien sabe habita aquí y allá, y busca unirse.</p>
+            <p>Quien sabe que su Ser lo contiene todo”.</p>
           </div>
         </div>
 
-        <div className="relative z-10 mt-2 flex items-center gap-4 md:-mt-4 md:gap-6 lg:-mt-8">
-          <div className="h-px flex-1 bg-[#e0d3ba]/60" />
+        <div className="mt-10 flex w-full items-center gap-4 md:mt-14 md:gap-6">
+          <div className="h-px flex-1 bg-[#e0d3ba]/55" />
           <h3 className="shrink-0 text-sm font-light tracking-[0.06em] text-[#e0d3ba] md:text-[15px]">
             Mataji Shaktiananda
           </h3>
-          <div className="h-px flex-1 bg-[#e0d3ba]/60" />
+          <div className="h-px flex-1 bg-[#e0d3ba]/55" />
         </div>
 
         <div className="mx-auto mt-8 max-w-3xl text-center md:mt-10">
@@ -97,6 +101,11 @@ export function MatajiSection() {
           </div>
         </div>
       </div>
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[radial-gradient(circle_at_center,#387799_0%,rgba(30,40,66,0)_80%)]"
+      />
     </section>
   );
 }
