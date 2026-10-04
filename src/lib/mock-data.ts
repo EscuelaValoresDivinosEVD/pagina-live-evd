@@ -51,7 +51,7 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     audioUrl: null,
     link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Tu-respiro-modula--vaca-y-sana-e3pp4jm",
     embedUrl:
-      "https://anchor.fm/shaktianandama/embed/episodes/Tu-respiro-modula--vaca-y-sana-e3pp4jm",
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Tu-respiro-modula--vaca-y-sana-e3pp4jm",
     imageUrl: "/meditations/banner-1.jpg",
   },
   {
@@ -64,7 +64,7 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     audioUrl: null,
     link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Invoca-a-la-conciencia-e3pjake",
     embedUrl:
-      "https://anchor.fm/shaktianandama/embed/episodes/Invoca-a-la-conciencia-e3pjake",
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Invoca-a-la-conciencia-e3pjake",
     imageUrl: "/meditations/banner-2.jpg",
   },
   {
@@ -77,7 +77,7 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     audioUrl: null,
     link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Tu-servicio-hacia-ti-e3p6r35",
     embedUrl:
-      "https://anchor.fm/shaktianandama/embed/episodes/Tu-servicio-hacia-ti-e3p6r35",
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Tu-servicio-hacia-ti-e3p6r35",
     imageUrl: "/meditations/banner-3.jpg",
   },
   {
@@ -90,7 +90,7 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     audioUrl: null,
     link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Tu-acuerdo-fue-encontrarte-e3onkq4",
     embedUrl:
-      "https://anchor.fm/shaktianandama/embed/episodes/Tu-acuerdo-fue-encontrarte-e3onkq4",
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Tu-acuerdo-fue-encontrarte-e3onkq4",
     imageUrl: "/meditations/banner-4.jpg",
   },
 ];

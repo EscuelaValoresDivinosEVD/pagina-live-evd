@@ -30,6 +30,11 @@ function showEmbedUrl() {
   return `${siteConfig.anchorSiteUrl.replace(/\/$/, "")}/embed`;
 }
 
+/**
+ * Player Anchor igual que el plugin WP «Anchor Episodes Index»:
+ * el iframe del show es alto, pero el contenedor lo recorta a la barra
+ * superior (≈161px desktop / 100px mobile) para evitar el scroll vacío.
+ */
 export function PodcastEpisodes({ episodes, source }: Props) {
   const list = useMemo(
     () => (episodes ?? []).slice(0, siteConfig.anchorMaxEpisodes),
@@ -39,7 +44,6 @@ export function PodcastEpisodes({ episodes, source }: Props) {
   const [iframeSrc, setIframeSrc] = useState(showEmbedUrl);
 
   const playEpisode = (episode: PodcastEpisode) => {
-    // Igual que el plugin WP: carga el embed del episodio en el iframe del show
     const next = episode.embedUrl || showEmbedUrl();
     setActiveId(episode.id);
     setIframeSrc(next);
@@ -47,22 +51,23 @@ export function PodcastEpisodes({ episodes, source }: Props) {
 
   return (
     <div id="podcast" className="scroll-mt-24 w-full">
-      <div className="overflow-hidden rounded-[14px] bg-white text-[#282f36] shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
-        {/* Contenedor del player: altura fija + sin scroll interno */}
-        <div className="h-[102px] overflow-hidden border-b border-black/5 bg-[#f7f8fa]">
+      <div className="overflow-hidden rounded-[20px] bg-[#f2f2f2] text-[#282f36] shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
+        {/* Contenedor recortado: solo se ve la barra del player */}
+        <div className="relative h-[100px] overflow-hidden md:h-[161px]">
           <iframe
             key={iframeSrc}
             name={IFRAME_NAME}
             src={iframeSrc}
             title="Podcast Anchor · Meditaciones Guiadas"
-            className="block h-[102px] w-full border-0"
+            className="absolute top-0 left-0 block w-full border-0"
+            style={{ minHeight: 602, height: 602 }}
             scrolling="no"
             loading="lazy"
             allow="autoplay; encrypted-media; clipboard-write"
           />
         </div>
 
-        <ul className="divide-y divide-black/5">
+        <ul className="divide-y divide-black/5 bg-white">
           {list.map((episode) => {
             const active = episode.id === activeId;
             return (

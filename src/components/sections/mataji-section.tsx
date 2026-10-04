@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import { Plus } from "lucide-react";
+import { siteConfig } from "@/lib/config";
 
 export function MatajiSection() {
   const [open, setOpen] = useState(false);
@@ -10,25 +12,46 @@ export function MatajiSection() {
   return (
     <section
       aria-label="Mataji Shaktiananda"
-      className="relative isolate overflow-hidden border-t border-[#387799]/25 bg-[linear-gradient(90deg,#0a1423_22%,#231724_93%)]"
+      className="relative isolate overflow-hidden bg-[linear-gradient(90deg,#0a1423_22%,#231724_91%)] pb-[4vh] md:pb-[6vh]"
     >
-      {/* Imagen de fondo de la sección (capa absoluta, no columna) */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-        <Image
-          src="/fondo-Ma.jpg"
-          alt=""
-          fill
-          className="object-cover object-[12%_center] opacity-95 sm:object-contain sm:object-left [mask-image:linear-gradient(90deg,black_0%,black_40%,transparent_86%)]"
-          sizes="100vw"
-          priority={false}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_22%_48%,rgba(140,150,190,0.16),transparent_52%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_30%,rgba(10,20,35,0.55)_58%,#0a1423_78%,#231724_100%)]" />
+      {/* Botón YouTube (como en live.evdsky.com) */}
+      <div className="relative z-20 flex justify-center pt-2 md:pt-0">
+        <div className="overflow-hidden rounded-[10px]">
+          <div
+            className="g-ytsubscribe"
+            data-channelid={siteConfig.youtubeChannelId}
+            data-layout="default"
+            data-count="default"
+          />
+        </div>
       </div>
+      <Script src="https://apis.google.com/js/platform.js" strategy="lazyOnload" />
 
-      <div className="relative z-10 mx-auto flex min-h-[70vw] w-full max-w-6xl flex-col justify-center px-4 py-16 sm:px-6 md:min-h-[520px] md:py-24 lg:min-h-[600px]">
-        <div className="ml-auto w-full max-w-xl text-center md:max-w-[48%] lg:max-w-[44%]">
-          <div className="font-heading space-y-1 text-[clamp(1.15rem,2vw,1.7rem)] leading-[1.55] text-[#e0d3ba]">
+      {/*
+        Contenedor de contenido: en desktop ~65% (como Divi row_3),
+        en mobile 95% con margen superior amplio para el retrato.
+      */}
+      <div className="relative z-10 mx-auto mt-[52vw] w-[95%] max-w-[1080px] px-1 sm:mt-[40vw] md:mt-[16vw] md:w-[65%]">
+        {/* Retrato circular con glow — absoluto, detrás del texto */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-[9vw] top-[-58vw] z-0 w-full max-w-none scale-[1.7] md:left-[-21vw] md:top-[-23vw] md:scale-100"
+        >
+          <div className="relative aspect-[1086/1186] w-full overflow-hidden rounded-full shadow-[0_2px_58px_80px_#0c1422]">
+            <Image
+              src="/fondo-Ma.jpg"
+              alt=""
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 95vw, 65vw"
+              priority={false}
+            />
+          </div>
+        </div>
+
+        {/* Cita */}
+        <div className="relative z-10 pt-[3vw] text-center md:pb-8">
+          <div className="font-heading space-y-1 text-[17px] leading-[1.55] text-[#e0d3ba] md:text-[22px] md:leading-[1.5]">
             <p>“¿Qué o quién es un meditador?</p>
             <p>Quien a través de sí mismo busca encontrarse.</p>
             <p>Quien sabe habita aquí y allá, y busca unirse.</p>
@@ -36,16 +59,18 @@ export function MatajiSection() {
           </div>
         </div>
 
-        <div className="mt-10 flex w-full items-center gap-4 md:mt-14 md:gap-6">
-          <div className="h-px flex-1 bg-[#e0d3ba]/55" />
-          <h3 className="shrink-0 text-sm font-light tracking-[0.06em] text-[#e0d3ba] md:text-[15px]">
+        {/* Divider con nombre */}
+        <div className="relative z-10 mt-2 flex w-full items-center gap-4 md:mt-2 md:gap-5">
+          <div className="h-px flex-1 bg-[#e0d3ba]" />
+          <h3 className="shrink-0 text-[15px] font-normal tracking-[0.02em] text-[#e0d3ba]">
             Mataji Shaktiananda
           </h3>
-          <div className="h-px flex-1 bg-[#e0d3ba]/55" />
+          <div className="h-px flex-1 bg-[#e0d3ba]" />
         </div>
 
-        <div className="mx-auto mt-8 max-w-3xl text-center md:mt-10">
-          <p className="text-sm leading-relaxed text-[#e0d3ba] md:text-[15px] md:leading-7">
+        {/* Descripción + leer más */}
+        <div className="relative z-10 mx-auto mt-[54px] px-[12vw] text-center md:mt-20 md:px-[12%]">
+          <p className="text-left text-[14px] leading-relaxed text-[#e0d3ba] md:text-[15px] md:leading-7">
             Meditar es la experiencia interna del alma, la forma de contacto
             entre el alma-mente individual y su conciencia cósmica. Es la visión
             de la belleza y la verdad del Ser.
@@ -55,7 +80,7 @@ export function MatajiSection() {
             type="button"
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
-            className="mt-6 inline-flex items-center gap-3 text-sm text-[#e0d3ba] transition hover:text-[#69e5e7]"
+            className="mt-4 inline-flex items-center gap-3 text-[13px] text-[#e0d3ba] transition hover:text-[#69e5e7]"
           >
             <span>{open ? "leer menos..." : "leer más..."}</span>
             <span
@@ -69,10 +94,10 @@ export function MatajiSection() {
 
           <div
             className={`overflow-hidden transition-all duration-500 ease-out ${
-              open ? "mt-6 max-h-[800px] opacity-100" : "max-h-0 opacity-0"
+              open ? "mt-6 max-h-[900px] opacity-100" : "max-h-0 opacity-0"
             }`}
           >
-            <div className="space-y-4 text-left text-sm leading-relaxed text-[#e0d3ba] md:text-[15px] md:leading-7">
+            <div className="space-y-4 text-left text-[14px] leading-relaxed text-[#e0d3ba] md:text-[15px] md:leading-7">
               <p>
                 Las Meditaciones junto a Mataji Shaktiananda son un evento
                 único, surgen de la Esfera Babaji y se ofrendan a los seres
@@ -101,11 +126,6 @@ export function MatajiSection() {
           </div>
         </div>
       </div>
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-[radial-gradient(circle_at_center,#387799_0%,rgba(30,40,66,0)_80%)]"
-      />
     </section>
   );
 }

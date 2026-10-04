@@ -34,8 +34,8 @@ export function toEpisodeEmbedUrl(link: string | null | undefined) {
   if (!link) return null;
   const match = link.match(/\/episodes\/([^/?#]+)/i);
   if (!match?.[1]) return null;
-  // Preferimos el embed compacto de Anchor (menos scroll raro que creators.spotify)
-  return `https://anchor.fm/shaktianandama/embed/episodes/${match[1]}`;
+  // Misma URL que usa «Anchor Episodes Index» en live.evdsky.com
+  return `https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/${match[1]}`;
 }
 
 export async function getLatestEpisodes(
