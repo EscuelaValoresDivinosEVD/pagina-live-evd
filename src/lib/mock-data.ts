@@ -49,8 +49,10 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     pubDate: "2026-10-02T17:39:40.000Z",
     duration: "00:35:01",
     audioUrl: null,
-    link: "https://open.spotify.com/show/5zDFfqLFzHcOtTLucM77yR",
-    imageUrl: "/podcast-cover.jpg",
+    link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Tu-respiro-modula--vaca-y-sana-e3pp4jm",
+    embedUrl:
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Tu-respiro-modula--vaca-y-sana-e3pp4jm",
+    imageUrl: "/meditations/banner-1.jpg",
   },
   {
     id: "mock-ep-2",
@@ -60,8 +62,10 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     pubDate: "2026-09-29T20:02:56.000Z",
     duration: "00:37:34",
     audioUrl: null,
-    link: "https://open.spotify.com/show/5zDFfqLFzHcOtTLucM77yR",
-    imageUrl: "/podcast-cover.jpg",
+    link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Invoca-a-la-conciencia-e3pjake",
+    embedUrl:
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Invoca-a-la-conciencia-e3pjake",
+    imageUrl: "/meditations/banner-2.jpg",
   },
   {
     id: "mock-ep-3",
@@ -71,8 +75,10 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     pubDate: "2026-09-21T20:54:30.000Z",
     duration: "00:37:17",
     audioUrl: null,
-    link: "https://open.spotify.com/show/5zDFfqLFzHcOtTLucM77yR",
-    imageUrl: "/podcast-cover.jpg",
+    link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Tu-servicio-hacia-ti-e3p6r35",
+    embedUrl:
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Tu-servicio-hacia-ti-e3p6r35",
+    imageUrl: "/meditations/banner-3.jpg",
   },
   {
     id: "mock-ep-4",
@@ -82,7 +88,9 @@ export const mockPodcastEpisodes: PodcastEpisode[] = [
     pubDate: "2026-09-11T18:02:20.000Z",
     duration: "00:39:44",
     audioUrl: null,
-    link: "https://open.spotify.com/show/5zDFfqLFzHcOtTLucM77yR",
-    imageUrl: "/podcast-cover.jpg",
+    link: "https://podcasters.spotify.com/pod/show/shaktianandama/episodes/Tu-acuerdo-fue-encontrarte-e3onkq4",
+    embedUrl:
+      "https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/Tu-acuerdo-fue-encontrarte-e3onkq4",
+    imageUrl: "/meditations/banner-4.jpg",
   },
 ];

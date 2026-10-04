@@ -16,6 +16,8 @@ export type PodcastEpisode = {
   duration: string;
   audioUrl: string | null;
   link: string;
+  /** URL de embed (iframe) estilo plugin Anchor Episodes Index */
+  embedUrl: string | null;
   imageUrl: string | null;
 };
 

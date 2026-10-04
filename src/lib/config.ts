@@ -6,9 +6,13 @@ export const siteConfig = {
   youtubeChannelId:
     process.env.YOUTUBE_CHANNEL_ID ?? "UCs6BtP_OoMkh18UjszWIuqg",
   youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",
+  /** Misma config que el plugin WP «Anchor Episodes Index» */
+  anchorSiteUrl:
+    process.env.ANCHOR_SITE_URL ?? "https://anchor.fm/shaktianandama",
   anchorRssUrl:
     process.env.ANCHOR_RSS_URL ??
     "https://anchor.fm/s/5ae7e064/podcast/rss",
+  anchorMaxEpisodes: 4,
   meditationsFeedUrl:
     process.env.MEDITATIONS_FEED_URL ?? "https://shaktianandama.com/feed/",
   meditationsWpJsonUrl:

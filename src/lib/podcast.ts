@@ -29,8 +29,16 @@ function attrValue(block: string, tag: string, attr: string) {
   return match?.[1] ?? null;
 }
 
+/** Convierte link de episodio a URL de embed (igual que el plugin WP). */
+export function toEpisodeEmbedUrl(link: string | null | undefined) {
+  if (!link) return null;
+  const match = link.match(/\/episodes\/([^/?#]+)/i);
+  if (!match?.[1]) return null;
+  return `https://creators.spotify.com/pod/show/shaktianandama/embed/episodes/${match[1]}`;
+}
+
 export async function getLatestEpisodes(
-  limit = 4,
+  limit = siteConfig.anchorMaxEpisodes,
 ): Promise<{ episodes: PodcastEpisode[]; source: "anchor-rss" | "mock" }> {
   try {
     const res = await fetch(siteConfig.anchorRssUrl, {
@@ -43,7 +51,10 @@ export async function getLatestEpisodes(
     }
 
     const xml = await res.text();
-    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].slice(0, limit);
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].slice(
+      0,
+      limit,
+    );
 
     const episodes: PodcastEpisode[] = items.map((match, index) => {
       const block = match[1] ?? "";
@@ -67,7 +78,8 @@ export async function getLatestEpisodes(
         pubDate: pubDate ? new Date(pubDate).toISOString() : "",
         duration,
         audioUrl,
-        link: link || siteConfig.spotifyShowUrl,
+        link: link || siteConfig.anchorSiteUrl,
+        embedUrl: toEpisodeEmbedUrl(link),
         imageUrl,
       };
     });
