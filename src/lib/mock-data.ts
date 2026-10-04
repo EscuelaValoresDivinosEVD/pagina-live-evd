@@ -8,8 +8,8 @@ export const mockMeditationPosts: MeditationPost[] = [
     excerpt:
       "¿Crees que el respiro se piensa? ¿Piensas para respirar? Y no hace falta que tengas una respuesta, simplemente, y lo sabes, el respiro se produce…",
     date: "2026-09-30",
-    url: "https://shaktianandama.com/meditaciones/",
-    imageUrl: "/podcast-cover.jpg",
+    url: "https://shaktianandama.com/2026/09/30/tu-respiro-modula-vacia-y-sana/",
+    imageUrl: "/meditations/banner-1.jpg",
   },
   {
     id: "mock-2",
@@ -17,8 +17,8 @@ export const mockMeditationPosts: MeditationPost[] = [
     excerpt:
       "Invócate a lo que creas seas, con respiraciones sutiles pero profundas, tal y como has adiestrado este sistema físico…",
     date: "2026-09-23",
-    url: "https://shaktianandama.com/meditaciones/",
-    imageUrl: "/podcast-cover.jpg",
+    url: "https://shaktianandama.com/2026/09/23/invoca-a-la-conciencia/",
+    imageUrl: "/meditations/banner-2.jpg",
   },
   {
     id: "mock-3",
@@ -26,8 +26,8 @@ export const mockMeditationPosts: MeditationPost[] = [
     excerpt:
       "Permítete pensar que respiras, que tu mente sepa lo que haces, y que comprenda además, lo que quieres en este momento: servirte.",
     date: "2026-09-16",
-    url: "https://shaktianandama.com/meditaciones/",
-    imageUrl: "/podcast-cover.jpg",
+    url: "https://shaktianandama.com/2026/09/16/tu-servicio-hacia-ti/",
+    imageUrl: "/meditations/banner-3.jpg",
   },
   {
     id: "mock-4",
@@ -35,8 +35,8 @@ export const mockMeditationPosts: MeditationPost[] = [
     excerpt:
       "Hazte presente y respira, hazte consciente y respira, llenándote como quieres y puedes, así como vaciándote…",
     date: "2026-09-09",
-    url: "https://shaktianandama.com/meditaciones/",
-    imageUrl: "/podcast-cover.jpg",
+    url: "https://shaktianandama.com/2026/09/09/tu-acuerdo-fue-encontrarte/",
+    imageUrl: "/meditations/banner-4.jpg",
   },
 ];
 

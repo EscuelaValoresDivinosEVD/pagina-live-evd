@@ -21,6 +21,23 @@ function looksLikeCloudflare(html: string) {
   );
 }
 
+function featuredFromWp(post: {
+  jetpack_featured_media_url?: string;
+  _embedded?: {
+    "wp:featuredmedia"?: Array<{ source_url?: string }>;
+  };
+  yoast_head_json?: {
+    og_image?: Array<{ url?: string }>;
+  };
+}) {
+  return (
+    post.jetpack_featured_media_url ||
+    post._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+    post.yoast_head_json?.og_image?.[0]?.url ||
+    null
+  );
+}
+
 async function fromWpJson(): Promise<MeditationPost[] | null> {
   const res = await fetch(siteConfig.meditationsWpJsonUrl, {
     headers: { "User-Agent": "EVDLiveBot/1.0", Accept: "application/json" },
@@ -40,20 +57,21 @@ async function fromWpJson(): Promise<MeditationPost[] | null> {
     _embedded?: {
       "wp:featuredmedia"?: Array<{ source_url?: string }>;
     };
+    yoast_head_json?: {
+      og_image?: Array<{ url?: string }>;
+    };
   }>;
 
   if (!Array.isArray(data) || !data.length) return null;
 
-  return data.slice(0, 4).map((post) => ({
+  return data.slice(0, 4).map((post, index) => ({
     id: String(post.id),
     title: stripHtml(post.title?.rendered ?? "Meditación"),
     excerpt: stripHtml(post.excerpt?.rendered ?? "").slice(0, 220),
     date: post.date.slice(0, 10),
     url: post.link,
     imageUrl:
-      post.jetpack_featured_media_url ||
-      post._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
-      "/podcast-cover.jpg",
+      featuredFromWp(post) || `/meditations/banner-${index + 1}.jpg`,
   }));
 }
 
@@ -87,6 +105,15 @@ async function fromRss(): Promise<MeditationPost[] | null> {
         block.match(/<description>([\s\S]*?)<\/description>/)?.[1] ||
         "",
     ).slice(0, 220);
+    const imageUrl =
+      block.match(
+        /<media:content[^>]+url="(https?:\/\/[^"]+)"/i,
+      )?.[1] ||
+      block.match(/<enclosure[^>]+url="(https?:\/\/[^"]+\.(?:jpe?g|png|webp))"/i)?.[1] ||
+      block.match(
+        /(https?:\/\/shaktianandama\.com\/wp-content\/uploads\/[^"'<\s]+)/i,
+      )?.[1] ||
+      `/meditations/banner-${index + 1}.jpg`;
 
     return {
       id: `rss-${index}-${title}`,
@@ -94,7 +121,7 @@ async function fromRss(): Promise<MeditationPost[] | null> {
       excerpt,
       date: dateRaw ? new Date(dateRaw).toISOString().slice(0, 10) : "",
       url: link,
-      imageUrl: "/podcast-cover.jpg",
+      imageUrl,
     };
   });
 }

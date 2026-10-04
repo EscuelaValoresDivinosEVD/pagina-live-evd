@@ -13,7 +13,7 @@ export const siteConfig = {
     process.env.MEDITATIONS_FEED_URL ?? "https://shaktianandama.com/feed/",
   meditationsWpJsonUrl:
     process.env.MEDITATIONS_WP_JSON_URL ??
-    "https://shaktianandama.com/wp-json/wp/v2/posts?per_page=4",
+    "https://shaktianandama.com/wp-json/wp/v2/posts?per_page=4&_embed=1",
   meditationsArchiveUrl: "https://shaktianandama.com/meditaciones/",
   spotifyShowUrl:
     "https://open.spotify.com/show/5zDFfqLFzHcOtTLucM77yR",
