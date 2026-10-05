@@ -100,18 +100,14 @@ export function LivePlayer({ initialStatus }: Props) {
                 sizes="(max-width: 768px) 100vw, 896px"
               />
 
-              <div className="pointer-events-none absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 backdrop-blur-sm md:top-5 md:right-5">
-                <span
-                  className={`h-2.5 w-2.5 rounded-full shadow-[0_0_10px_#ff0000] ${
-                    status.isLive
-                      ? "animate-pulse bg-red-500"
-                      : "bg-red-500/80"
-                  }`}
-                />
-                <span className="text-[11px] font-bold tracking-[0.12em] text-white uppercase">
-                  En vivo
-                </span>
-              </div>
+              {status.isLive && (
+                <div className="pointer-events-none absolute top-4 right-4 z-10 flex items-center gap-2 rounded-full border border-white/10 bg-black/50 px-3 py-1.5 backdrop-blur-sm md:top-5 md:right-5">
+                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500 shadow-[0_0_10px_#ff0000]" />
+                  <span className="text-[11px] font-bold tracking-[0.12em] text-white uppercase">
+                    En vivo
+                  </span>
+                </div>
+              )}
 
               {loading && (
                 <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/25 text-xs tracking-[0.2em] text-white uppercase">
