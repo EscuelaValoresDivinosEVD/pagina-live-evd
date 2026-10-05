@@ -4,6 +4,8 @@ import Script from "next/script";
 
 const FORM_ID = "1mA20h8rIqVPdvsD22Dg";
 const IFRAME_ID = `inline-${FORM_ID}`;
+/** Altura suficiente para título + 4 campos + botón Enviar */
+const FORM_HEIGHT = 620;
 
 /**
  * Embed LeadConnector / GoHighLevel — layout 2 columnas como live.evdsky.com:
@@ -17,7 +19,7 @@ export function SubscribeEmbed() {
       aria-labelledby="suscribete-heading"
     >
       <div className="mx-auto w-[95%] max-w-[1280px] rounded-[15px] px-4 py-8 sm:px-8 md:px-10 md:py-10">
-        <div className="grid items-center gap-10 md:grid-cols-2 md:gap-12 lg:gap-16">
+        <div className="grid items-start gap-10 md:grid-cols-2 md:items-center md:gap-12 lg:gap-16">
           <div className="md:pl-[8%] lg:pl-[12%]">
             <h2 id="suscribete-heading" className="sr-only">
               Suscríbete
@@ -31,7 +33,7 @@ export function SubscribeEmbed() {
 
           <div
             className="overflow-hidden rounded-[8px] bg-[#141414] shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
-            style={{ minHeight: 410, height: 410 }}
+            style={{ minHeight: FORM_HEIGHT, height: FORM_HEIGHT }}
           >
             <iframe
               src={`https://api.leadconnectorhq.com/widget/form/${FORM_ID}`}
@@ -50,7 +52,7 @@ export function SubscribeEmbed() {
               data-deactivation-type="neverDeactivate"
               data-deactivation-value=""
               data-form-name="live.escuelavaloresdivinos.org"
-              data-height="410"
+              data-height={String(FORM_HEIGHT)}
               data-layout-iframe-id={IFRAME_ID}
               data-form-id={FORM_ID}
               title="Suscríbete · Escuela Valores Divinos"
