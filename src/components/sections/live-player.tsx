@@ -113,17 +113,11 @@ export function LivePlayer({ initialStatus }: Props) {
                 </span>
               </div>
 
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#69e5e7]/35 text-white shadow-[0_0_30px_rgba(105,229,231,0.35)] backdrop-blur-[2px] transition group-hover:scale-105 group-hover:bg-[#69e5e7]/45 md:h-20 md:w-20">
-                  {loading ? (
-                    <span className="text-[10px] tracking-[0.2em] uppercase">
-                      …
-                    </span>
-                  ) : (
-                    <Play className="ml-1 h-7 w-7 fill-current md:h-8 md:w-8" />
-                  )}
+              {loading && (
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/25 text-xs tracking-[0.2em] text-white uppercase">
+                  …
                 </span>
-              </div>
+              )}
             </button>
           )}
         </div>
