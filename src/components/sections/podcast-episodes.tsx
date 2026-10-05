@@ -51,8 +51,8 @@ export function PodcastEpisodes({ episodes, source }: Props) {
   return (
     <div id="podcast" className="scroll-mt-24 w-full">
       <div className="overflow-hidden rounded-[12px] bg-[#efeff0] text-[#292f36] shadow-[0_10px_28px_rgba(0,0,0,0.22)]">
-        {/* Solo la barra superior del embed (~altura del player compacto) */}
-        <div className="relative h-[102px] overflow-hidden bg-[#f7f7f8] md:h-[152px]">
+        {/* Solo la barra del player (sin el vacío blanco del embed) */}
+        <div className="relative h-[98px] overflow-hidden bg-white">
           <iframe
             key={iframeSrc}
             name={IFRAME_NAME}
