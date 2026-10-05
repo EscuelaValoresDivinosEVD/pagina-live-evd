@@ -32,13 +32,20 @@ export function KirtanSection() {
           Próximas actividades
         </h2>
 
-        <div className="grid gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
+        {/*
+          Subgrid: título / hora / imagen / botón en filas compartidas,
+          así los tres cuadrados quedan alineados aunque un título sea más largo.
+        */}
+        <div className="grid gap-10 md:grid-cols-3 md:grid-rows-[auto_auto_auto_auto] md:gap-x-8 md:gap-y-4 lg:gap-x-12">
           {activities.map((item) => (
-            <article key={item.title} className="flex flex-col items-start">
+            <article
+              key={item.title}
+              className="grid grid-rows-[auto_auto_auto_auto] gap-y-3 md:row-span-4 md:grid-rows-subgrid md:gap-y-0"
+            >
               <h3 className="text-[1.15rem] font-semibold leading-snug text-white md:text-[1.25rem]">
                 {item.title}
               </h3>
-              <p className="mt-1 text-sm font-normal text-[#b8b8c0] md:text-[15px]">
+              <p className="text-sm font-normal text-[#b8b8c0] md:text-[15px]">
                 {item.time}
               </p>
 
@@ -46,7 +53,7 @@ export function KirtanSection() {
                 href={item.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group mt-4 block w-full"
+                className="group block w-full self-start"
               >
                 <div className="relative aspect-square w-full overflow-hidden rounded-[18px]">
                   <Image
@@ -63,7 +70,7 @@ export function KirtanSection() {
                 href={item.href}
                 target="_blank"
                 rel="noreferrer"
-                className={`mt-4 inline-flex items-center rounded-full px-5 py-2 text-sm font-medium text-white transition ${item.buttonClass}`}
+                className={`inline-flex w-fit items-center self-start rounded-full px-5 py-2 text-sm font-medium text-white transition ${item.buttonClass}`}
               >
                 Saber más
               </a>
