@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Play } from "lucide-react";
 import type { LiveStatus } from "@/lib/types";
 
 type Props = {
