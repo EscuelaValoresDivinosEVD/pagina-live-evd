@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { Play } from "lucide-react";
+import { MoreHorizontal, Play } from "lucide-react";
 import type { PodcastEpisode } from "@/lib/types";
 import { siteConfig } from "@/lib/config";
 
@@ -31,9 +31,8 @@ function showEmbedUrl() {
 }
 
 /**
- * Player Anchor igual que el plugin WP «Anchor Episodes Index»:
- * el iframe del show es alto, pero el contenedor lo recorta a la barra
- * superior (≈161px desktop / 100px mobile) para evitar el scroll vacío.
+ * Player Anchor compacto (estilo plugin WP «Anchor Episodes Index»):
+ * barra del show recortada + lista densa de 4 episodios.
  */
 export function PodcastEpisodes({ episodes, source }: Props) {
   const list = useMemo(
@@ -51,9 +50,9 @@ export function PodcastEpisodes({ episodes, source }: Props) {
 
   return (
     <div id="podcast" className="scroll-mt-24 w-full">
-      <div className="overflow-hidden rounded-[20px] bg-[#f2f2f2] text-[#282f36] shadow-[0_10px_30px_rgba(0,0,0,0.28)]">
-        {/* Contenedor recortado: solo se ve la barra del player */}
-        <div className="relative h-[100px] overflow-hidden md:h-[161px]">
+      <div className="overflow-hidden rounded-[12px] bg-[#efeff0] text-[#292f36] shadow-[0_10px_28px_rgba(0,0,0,0.22)]">
+        {/* Solo la barra superior del embed (~altura del player compacto) */}
+        <div className="relative h-[102px] overflow-hidden bg-[#f7f7f8] md:h-[152px]">
           <iframe
             key={iframeSrc}
             name={IFRAME_NAME}
@@ -67,7 +66,7 @@ export function PodcastEpisodes({ episodes, source }: Props) {
           />
         </div>
 
-        <ul className="divide-y divide-black/5 bg-white">
+        <ul className="space-y-2.5 px-2.5 py-2.5 md:space-y-[10px] md:px-[11px] md:py-[11px]">
           {list.map((episode) => {
             const active = episode.id === activeId;
             return (
@@ -75,45 +74,51 @@ export function PodcastEpisodes({ episodes, source }: Props) {
                 <button
                   type="button"
                   onClick={() => playEpisode(episode)}
-                  className={`flex w-full items-start gap-3 px-3 py-3 text-left transition hover:bg-[#f3f5f8] sm:gap-4 sm:px-4 ${
-                    active ? "bg-[#eef6ff]" : "bg-white"
+                  className={`relative flex w-full items-start rounded-[4px] bg-white px-3 py-3 text-left transition hover:bg-[#fafafa] md:px-[14px] md:py-[12px] ${
+                    active ? "ring-1 ring-[#5000b9]/25" : ""
                   }`}
                 >
-                  <span className="relative mt-0.5 h-12 w-12 shrink-0 overflow-hidden rounded-md bg-[#dde3ea] sm:h-14 sm:w-14">
+                  <span className="relative mr-2.5 h-[47px] w-[47px] shrink-0 overflow-hidden rounded-[4px] bg-[#dde3ea] md:mr-[14px]">
                     <Image
                       src={episode.imageUrl || "/podcast-cover.jpg"}
                       alt=""
                       fill
                       className="object-cover"
-                      sizes="56px"
+                      sizes="47px"
                     />
-                    <span className="absolute inset-0 flex items-center justify-center bg-black/20">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#282f36] shadow">
-                        <Play className="ml-0.5 h-3.5 w-3.5 fill-current" />
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/15">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#292f36] shadow-sm">
+                        <Play className="ml-0.5 h-3 w-3 fill-current" />
                       </span>
                     </span>
                   </span>
 
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold leading-snug text-[#1c2228] sm:text-[15px]">
+                  <span className="min-w-0 flex-1 pr-[92px]">
+                    <span className="mb-0.5 block text-[14px] font-bold leading-[17px] text-[#292f36] md:text-[15px]">
                       {episode.title}
                     </span>
                     {episode.description && (
-                      <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-[#5b6570] sm:text-[13px]">
-                        {episode.description}
+                      <span className="flex items-start gap-1 text-[12px] leading-[14px] text-[rgba(41,47,54,0.7)] md:text-[13px]">
+                        <span className="line-clamp-2 min-w-0 flex-1">
+                          {episode.description}
+                        </span>
+                        <MoreHorizontal
+                          className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#c9cbcd]"
+                          aria-hidden
+                        />
                       </span>
                     )}
                   </span>
 
-                  <span className="shrink-0 pt-0.5 text-right text-[11px] leading-4 text-[#6b7280]">
-                    {episode.duration && (
-                      <span className="block font-medium text-[#374151]">
-                        {episode.duration}
+                  <span className="absolute top-3 right-3 text-right text-[11px] leading-[13px] text-[#c9cbcd] md:top-[12px] md:right-[14px] md:text-[12px]">
+                    {episode.pubDate && (
+                      <span className="block whitespace-nowrap">
+                        {formatDate(episode.pubDate)}
                       </span>
                     )}
-                    {episode.pubDate && (
-                      <span className="mt-1 block max-w-[88px]">
-                        {formatDate(episode.pubDate)}
+                    {episode.duration && (
+                      <span className="mt-1.5 block whitespace-nowrap">
+                        {episode.duration}
                       </span>
                     )}
                   </span>
