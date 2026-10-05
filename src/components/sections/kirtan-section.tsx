@@ -6,56 +6,68 @@ const activities = [
     time: "6pm (COL-ECU)",
     image: "/chalisa.jpg",
     href: "https://escuelavaloresdivinos.org/chalisa",
+    buttonClass: "bg-[#c4787a] hover:bg-[#b56a6c]",
   },
   {
     title: "Medita junto a Mataji Shaktiananda",
     time: "6:30pm (COL-ECU)",
     image: "/Medita-junto-a-Mataji.jpg",
     href: "https://escuelavaloresdivinos.org/medita/",
+    buttonClass: "bg-[#4a5d73] hover:bg-[#3e5166]",
   },
   {
     title: "Kirtan & Fuego Sagrado",
     time: "6:30pm (COL-ECU)",
     image: "/fuego-sagrado-1.jpg",
     href: "https://escuelavaloresdivinos.org/fuegosagrado",
+    buttonClass: "bg-[#a88b6a] hover:bg-[#967a5c]",
   },
 ];
 
 export function KirtanSection() {
   return (
-    <section className="border-t border-white/5 py-16 md:py-20">
+    <section className="border-t border-white/5 py-14 md:py-16">
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <h2 className="mb-10 text-center text-2xl font-light tracking-[0.18em] text-[#e0d9cc] uppercase md:text-3xl">
+        <h2 className="mb-10 text-center text-2xl font-light tracking-[0.18em] text-[#e0d9cc] uppercase md:mb-12 md:text-3xl">
           Próximas actividades
         </h2>
-        <div className="grid gap-6 md:grid-cols-3">
+
+        <div className="grid gap-10 md:grid-cols-3 md:gap-8 lg:gap-12">
           {activities.map((item) => (
-            <a
-              key={item.title}
-              href={item.href}
-              target="_blank"
-              rel="noreferrer"
-              className="group overflow-hidden rounded-[15px] border border-white/10 bg-[#0a1423]/40 transition hover:border-[#69e5e7]/40"
-            >
-              <div className="relative aspect-square overflow-hidden">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <div className="space-y-2 p-5 text-center">
-                <h3 className="text-lg font-light leading-snug text-[#e0d9cc]">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-[#69e5e7]">{item.time}</p>
-                <span className="inline-block pt-1 text-xs tracking-[0.16em] text-[#a4e5e8] uppercase">
-                  Saber más →
-                </span>
-              </div>
-            </a>
+            <article key={item.title} className="flex flex-col items-start">
+              <h3 className="text-[1.15rem] font-semibold leading-snug text-white md:text-[1.25rem]">
+                {item.title}
+              </h3>
+              <p className="mt-1 text-sm font-normal text-[#b8b8c0] md:text-[15px]">
+                {item.time}
+              </p>
+
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className="group mt-4 block w-full"
+              >
+                <div className="relative aspect-square w-full overflow-hidden rounded-[18px]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                    sizes="(max-width: 768px) 100vw, 30vw"
+                  />
+                </div>
+              </a>
+
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                className={`mt-4 inline-flex items-center rounded-full px-5 py-2 text-sm font-medium text-white transition ${item.buttonClass}`}
+              >
+                Saber más
+              </a>
+            </article>
           ))}
         </div>
       </div>
