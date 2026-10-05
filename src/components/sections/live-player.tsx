@@ -17,9 +17,10 @@ export function LivePlayer({ initialStatus }: Props) {
 
   useEffect(() => {
     let cancelled = false;
+    // El servidor cachea 5 min; el cliente solo pide el valor cacheado.
     const refresh = async () => {
       try {
-        const res = await fetch("/api/youtube-live", { cache: "no-store" });
+        const res = await fetch("/api/youtube-live");
         if (!res.ok) return;
         const data = (await res.json()) as LiveStatus;
         if (!cancelled) setStatus(data);
@@ -27,7 +28,7 @@ export function LivePlayer({ initialStatus }: Props) {
         // keep previous status
       }
     };
-    const id = window.setInterval(refresh, 90_000);
+    const id = window.setInterval(refresh, 5 * 60 * 1000);
     return () => {
       cancelled = true;
       window.clearInterval(id);
@@ -39,7 +40,8 @@ export function LivePlayer({ initialStatus }: Props) {
     setError(null);
     setShowOffline(false);
     try {
-      const res = await fetch("/api/youtube-live", { cache: "no-store" });
+      // Usa el estado cacheado del servidor (no fuerza una consulta a YouTube).
+      const res = await fetch("/api/youtube-live");
       const data = (await res.json()) as LiveStatus;
       setStatus(data);
       if (data.isLive && data.videoId) {

@@ -9,7 +9,8 @@ import { getLiveStatus } from "@/lib/youtube";
 import { getLatestEpisodes } from "@/lib/podcast";
 import { getLatestMeditations } from "@/lib/meditations";
 
-export const revalidate = 60;
+/** ISR de la página; el estado live se cachea aparte cada 5 min en servidor. */
+export const revalidate = 300;
 
 export default async function HomePage() {
   const [liveStatus, podcast, meditations] = await Promise.all([

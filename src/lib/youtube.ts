@@ -1,6 +1,17 @@
 import { siteConfig } from "@/lib/config";
 import type { LiveStatus } from "@/lib/types";
 
+/** Intervalo máximo entre consultas reales a YouTube (API o scrape). */
+export const LIVE_STATUS_TTL_MS = 5 * 60 * 1000;
+
+type CacheEntry = {
+  status: LiveStatus;
+  fetchedAt: number;
+};
+
+let cache: CacheEntry | null = null;
+let refreshInFlight: Promise<LiveStatus> | null = null;
+
 function offlineStatus(
   source: LiveStatus["source"],
   message: string,
@@ -28,7 +39,8 @@ async function checkViaYoutubeApi(channelId: string): Promise<LiveStatus | null>
   url.searchParams.set("maxResults", "1");
   url.searchParams.set("key", key);
 
-  const res = await fetch(url, { next: { revalidate: 60 } });
+  // Sin caché de Next: el TTL lo controlamos nosotros (5 min).
+  const res = await fetch(url.toString(), { cache: "no-store" });
   if (!res.ok) return null;
 
   const data = (await res.json()) as {
@@ -72,7 +84,7 @@ async function checkViaPublicLive(channelId: string): Promise<LiveStatus> {
           "Mozilla/5.0 (compatible; EVDLiveBot/1.0; +https://live.evdsky.com)",
         "Accept-Language": "es-ES,es;q=0.9",
       },
-      next: { revalidate: 60 },
+      cache: "no-store",
       redirect: "follow",
     },
   );
@@ -120,7 +132,7 @@ function decodeHtml(value: string) {
     .replace(/\\"/g, '"');
 }
 
-export async function getLiveStatus(): Promise<LiveStatus> {
+async function fetchLiveStatusFromUpstream(): Promise<LiveStatus> {
   const channelId = siteConfig.youtubeChannelId;
 
   try {
@@ -133,4 +145,55 @@ export async function getLiveStatus(): Promise<LiveStatus> {
       "No se pudo comprobar el estado del live. Intenta de nuevo en unos minutos.",
     );
   }
+}
+
+function isFresh(entry: CacheEntry, now = Date.now()) {
+  return now - entry.fetchedAt < LIVE_STATUS_TTL_MS;
+}
+
+/**
+ * Consulta real a YouTube. Deduplica refrescos concurrentes
+ * y actualiza el caché en memoria.
+ */
+async function refreshLiveStatus(): Promise<LiveStatus> {
+  if (refreshInFlight) return refreshInFlight;
+
+  refreshInFlight = (async () => {
+    const status = await fetchLiveStatusFromUpstream();
+    cache = { status, fetchedAt: Date.now() };
+    return status;
+  })().finally(() => {
+    refreshInFlight = null;
+  });
+
+  return refreshInFlight;
+}
+
+/**
+ * Siempre responde con el valor cacheado.
+ * - Si el caché está fresco (< 5 min): lo devuelve sin tocar YouTube.
+ * - Si está vencido: lo devuelve igual y refresca en segundo plano.
+ * - Solo en arranque en frío (sin caché) espera la primera consulta.
+ */
+export async function getLiveStatus(): Promise<LiveStatus> {
+  if (cache) {
+    if (!isFresh(cache)) {
+      void refreshLiveStatus();
+    }
+    return cache.status;
+  }
+
+  return refreshLiveStatus();
+}
+
+/** Solo para tests / diagnóstico. */
+export function getLiveStatusCacheMeta() {
+  return cache
+    ? {
+        fetchedAt: cache.fetchedAt,
+        ageMs: Date.now() - cache.fetchedAt,
+        isFresh: isFresh(cache),
+        status: cache.status,
+      }
+    : null;
 }
