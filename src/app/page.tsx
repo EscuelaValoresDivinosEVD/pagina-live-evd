@@ -5,7 +5,6 @@ import { LivePlayer } from "@/components/sections/live-player";
 import { MeditationPosts } from "@/components/sections/meditation-posts";
 import { KirtanSection } from "@/components/sections/kirtan-section";
 import { SubscribeEmbed } from "@/components/sections/subscribe-embed";
-import { SiteFooter } from "@/components/sections/site-footer";
 import { getLiveStatus } from "@/lib/youtube";
 import { getLatestEpisodes } from "@/lib/podcast";
 import { getLatestMeditations } from "@/lib/meditations";
@@ -37,7 +36,6 @@ export default async function HomePage() {
         <KirtanSection />
         <SubscribeEmbed />
       </main>
-      <SiteFooter />
     </>
   );
 }
