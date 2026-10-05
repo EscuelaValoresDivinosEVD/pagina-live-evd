@@ -1,0 +1,7 @@
+NEXTJS_ENV=development
+YOUTUBE_API_KEY=
+YOUTUBE_CHANNEL_ID=UCs6BtP_OoMkh18UjszWIuqg
+ANCHOR_SITE_URL=https://anchor.fm/shaktianandama
+ANCHOR_RSS_URL=https://anchor.fm/s/5ae7e064/podcast/rss
+MEDITATIONS_FEED_URL=https://shaktianandama.com/feed/
+MEDITATIONS_WP_JSON_URL=https://shaktianandama.com/wp-json/wp/v2/posts?per_page=4&_embed=1

@@ -33,9 +33,37 @@ Copia `.env.example` a `.env.local`:
 
 El embed CRM ya está integrado en código; no requiere variable de entorno.
 
+## Deploy en Cloudflare Workers (OpenNext)
+
+Esta app usa SSR + Route Handlers, así que se publica en **Workers** (no Pages estático).
+
+```bash
+# Primera vez (ya hecho en este repo):
+# npx @opennextjs/cloudflare migrate
+
+# Preview local en runtime Workers
+npm run preview
+
+# Deploy a producción
+npm run deploy
+```
+
+Worker actual: [https://live-evdsky.adminweb-e49.workers.dev](https://live-evdsky.adminweb-e49.workers.dev)
+
+Secrets (producción):
+
+```bash
+npx wrangler secret put YOUTUBE_API_KEY
+npx wrangler secret put YOUTUBE_CHANNEL_ID
+# …y el resto de vars de .env.example
+```
+
+Para dominio custom (`live.evdsky.com`): Cloudflare Dashboard → Workers → `live-evdsky` → Settings → Domains & Routes.
+
 ## Stack
 
 - Next.js (App Router)
 - TypeScript
 - Tailwind CSS v4
 - shadcn/ui (Button, Card, Input, Label, Separator, Accordion)
+- `@opennextjs/cloudflare` + Wrangler
