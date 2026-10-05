@@ -72,7 +72,7 @@ export function LivePlayer({ initialStatus }: Props) {
             <button
               type="button"
               onClick={handlePlay}
-              className="absolute inset-0 block h-full w-full"
+              className="absolute inset-0 block h-full w-full cursor-pointer"
               aria-label="Reintentar transmisión en vivo"
             >
               <Image
@@ -88,7 +88,7 @@ export function LivePlayer({ initialStatus }: Props) {
             <button
               type="button"
               onClick={handlePlay}
-              className="group absolute inset-0 block h-full w-full"
+              className="group absolute inset-0 block h-full w-full cursor-pointer"
               aria-label="Reproducir transmisión en vivo"
             >
               <Image
