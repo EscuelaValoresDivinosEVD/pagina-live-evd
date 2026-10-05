@@ -125,7 +125,12 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    @apply scroll-smooth font-sans;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
   .font-heading {
     font-family: var(--font-heading), "Alice", Georgia, serif;
