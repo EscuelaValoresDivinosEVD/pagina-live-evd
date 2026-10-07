@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { LiveStatus } from "@/lib/types";
+import {
+  EVD_YOUTUBE_CHANNEL_ID,
+  buildChannelLiveEmbedUrl,
+} from "@/lib/youtube-live-parse";
 
 type Props = {
   initialStatus: LiveStatus;
@@ -14,6 +18,11 @@ export function LivePlayer({ initialStatus }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showOffline, setShowOffline] = useState(false);
+
+  const canPlayLive = Boolean(status.isLive && status.videoId);
+  const embedSrc = canPlayLive
+    ? buildChannelLiveEmbedUrl(EVD_YOUTUBE_CHANNEL_ID, { autoplay: true })
+    : null;
 
   useEffect(() => {
     let cancelled = false;
@@ -45,6 +54,7 @@ export function LivePlayer({ initialStatus }: Props) {
       const data = (await res.json()) as LiveStatus;
       setStatus(data);
       if (data.isLive && data.videoId) {
+        // El iframe usa live_stream?channel=EVD (live edge + canal fijo).
         setPlaying(true);
       } else {
         setPlaying(false);
@@ -62,10 +72,10 @@ export function LivePlayer({ initialStatus }: Props) {
     <section id="en-vivo" className="relative scroll-mt-24 px-4 sm:px-6">
       <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-xl bg-black shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
         <div className="relative aspect-video w-full">
-          {playing && status.videoId ? (
+          {playing && embedSrc ? (
             <iframe
               className="absolute inset-0 h-full w-full"
-              src={`https://www.youtube.com/embed/${status.videoId}?autoplay=1&rel=0&modestbranding=1`}
+              src={embedSrc}
               title={status.title ?? "Transmisión en vivo"}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen

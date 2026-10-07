@@ -1,7 +1,12 @@
 import { siteConfig } from "@/lib/config";
 import type { LiveStatus } from "@/lib/types";
+import {
+  EVD_YOUTUBE_CHANNEL_ID,
+  extractPublicLiveCandidate,
+  isValidVideoId,
+} from "@/lib/youtube-live-parse";
 
-/** Intervalo máximo entre consultas reales a YouTube (API o scrape). */
+/** Intervalo máximo entre consultas reales a YouTube. */
 export const LIVE_STATUS_TTL_MS = 5 * 60 * 1000;
 
 type CacheEntry = {
@@ -11,6 +16,19 @@ type CacheEntry = {
 
 let cache: CacheEntry | null = null;
 let refreshInFlight: Promise<LiveStatus> | null = null;
+
+function getChannelId() {
+  return (
+    process.env.YOUTUBE_CHANNEL_ID?.trim() ||
+    siteConfig.youtubeChannelId ||
+    EVD_YOUTUBE_CHANNEL_ID
+  );
+}
+
+function getApiKey() {
+  // Lectura en runtime (Workers secrets no están disponibles al evaluar el módulo).
+  return process.env.YOUTUBE_API_KEY?.trim() || siteConfig.youtubeApiKey || "";
+}
 
 function offlineStatus(
   source: LiveStatus["source"],
@@ -27,54 +45,84 @@ function offlineStatus(
   };
 }
 
-async function checkViaYoutubeApi(channelId: string): Promise<LiveStatus | null> {
-  const key = siteConfig.youtubeApiKey;
-  if (!key) return null;
+type VerifiedVideo = {
+  videoId: string;
+  title: string;
+  thumbnailUrl: string;
+  channelId: string;
+  isLive: boolean;
+};
 
-  const url = new URL("https://www.googleapis.com/youtube/v3/search");
-  url.searchParams.set("part", "snippet");
-  url.searchParams.set("channelId", channelId);
-  url.searchParams.set("eventType", "live");
-  url.searchParams.set("type", "video");
-  url.searchParams.set("maxResults", "1");
+/**
+ * Hard gate: videos.list (1 unidad) confirma channelId + liveBroadcastContent.
+ * Nunca devolver un video de otro canal ni un VOD como “en vivo”.
+ */
+async function verifyVideoForChannel(
+  videoId: string,
+  expectedChannelId: string,
+): Promise<VerifiedVideo | null> {
+  if (!isValidVideoId(videoId)) return null;
+
+  const key = getApiKey();
+  if (!key) {
+    // Sin API: solo aceptar si el scrape ya ató el channelId al expected.
+    return null;
+  }
+
+  const url = new URL("https://www.googleapis.com/youtube/v3/videos");
+  url.searchParams.set("part", "snippet,liveStreamingDetails");
+  url.searchParams.set("id", videoId);
   url.searchParams.set("key", key);
 
-  // Sin caché de Next: el TTL lo controlamos nosotros (5 min).
   const res = await fetch(url.toString(), { cache: "no-store" });
   if (!res.ok) return null;
 
   const data = (await res.json()) as {
     items?: Array<{
-      id?: { videoId?: string };
+      id?: string;
       snippet?: {
+        channelId?: string;
         title?: string;
+        liveBroadcastContent?: string;
         thumbnails?: { high?: { url?: string }; medium?: { url?: string } };
+      };
+      liveStreamingDetails?: {
+        actualStartTime?: string;
+        actualEndTime?: string;
+        concurrentViewers?: string;
       };
     }>;
   };
 
   const item = data.items?.[0];
-  if (!item?.id?.videoId) {
-    return offlineStatus(
-      "youtube-api",
-      "El canal no está en vivo en este momento.",
-    );
+  if (!item?.snippet?.channelId) return null;
+
+  if (item.snippet.channelId !== expectedChannelId) {
+    return null;
   }
 
+  const broadcast = item.snippet.liveBroadcastContent;
+  const details = item.liveStreamingDetails;
+  const isLive =
+    broadcast === "live" ||
+    (!!details?.actualStartTime && !details?.actualEndTime);
+
   return {
-    isLive: true,
-    videoId: item.id.videoId,
-    title: item.snippet?.title ?? "Transmisión en vivo",
+    videoId: item.id && isValidVideoId(item.id) ? item.id : videoId,
+    title: item.snippet.title ?? "Transmisión en vivo",
     thumbnailUrl:
-      item.snippet?.thumbnails?.high?.url ??
-      item.snippet?.thumbnails?.medium?.url ??
-      `https://i.ytimg.com/vi/${item.id.videoId}/hqdefault.jpg`,
-    checkedAt: new Date().toISOString(),
-    source: "youtube-api",
-    message: "El canal está en vivo ahora.",
+      item.snippet.thumbnails?.high?.url ??
+      item.snippet.thumbnails?.medium?.url ??
+      `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    channelId: item.snippet.channelId,
+    isLive,
   };
 }
 
+/**
+ * Fallback barato (sin search.list): scrape de /live + validación estricta.
+ * search.list cuesta 100 unidades/día y hoy está agotando la cuota (429).
+ */
 async function checkViaPublicLive(channelId: string): Promise<LiveStatus> {
   const res = await fetch(
     `https://www.youtube.com/channel/${channelId}/live`,
@@ -90,29 +138,58 @@ async function checkViaPublicLive(channelId: string): Promise<LiveStatus> {
   );
 
   const html = await res.text();
-  const finalUrl = res.url;
+  const candidate = extractPublicLiveCandidate(html, res.url, channelId);
 
-  const watchMatch = finalUrl.match(/[?&]v=([\w-]{11})/);
-  const videoIdFromUrl = watchMatch?.[1] ?? null;
+  if (!candidate) {
+    return offlineStatus(
+      "public-live",
+      "No hay transmisión en vivo en este momento.",
+    );
+  }
 
-  const isLiveNow =
-    /"isLiveNow"\s*:\s*true/.test(html) ||
-    /"isLive"\s*:\s*true/.test(html) ||
-    /"liveBroadcastContent"\s*:\s*"live"/.test(html);
+  // Si el HTML ya trae channelId ajeno, rechazar sin gastar cuota.
+  if (
+    candidate.channelIdFromPage &&
+    candidate.channelIdFromPage !== channelId
+  ) {
+    return offlineStatus(
+      "public-live",
+      "No hay transmisión en vivo en este momento.",
+    );
+  }
 
-  const videoIdMatch =
-    html.match(/"videoId"\s*:\s*"([\w-]{11})"/)?.[1] ?? videoIdFromUrl;
-
-  const titleMatch =
-    html.match(/"title"\s*:\s*"([^"]+)"/)?.[1] ??
-    html.match(/<title>([^<]+)<\/title>/)?.[1]?.replace(" - YouTube", "");
-
-  if (isLiveNow && videoIdMatch) {
+  const verified = await verifyVideoForChannel(candidate.videoId, channelId);
+  if (verified) {
+    if (!verified.isLive) {
+      return offlineStatus(
+        "youtube-api",
+        "No hay transmisión en vivo en este momento.",
+      );
+    }
     return {
       isLive: true,
-      videoId: videoIdMatch,
-      title: titleMatch ? decodeHtml(titleMatch) : "Transmisión en vivo",
-      thumbnailUrl: `https://i.ytimg.com/vi/${videoIdMatch}/hqdefault.jpg`,
+      videoId: verified.videoId,
+      title: verified.title,
+      thumbnailUrl: verified.thumbnailUrl,
+      checkedAt: new Date().toISOString(),
+      source: "youtube-api",
+      message: "El canal está en vivo ahora.",
+    };
+  }
+
+  // Sin API key / verify falló: solo aceptar si el player del canal señala live
+  // y el channelId de página coincide (o el redirect fue a /watch del canal).
+  if (
+    getApiKey() === "" &&
+    candidate.pageSignalsLive &&
+    (!candidate.channelIdFromPage ||
+      candidate.channelIdFromPage === channelId)
+  ) {
+    return {
+      isLive: true,
+      videoId: candidate.videoId,
+      title: candidate.title ?? "Transmisión en vivo",
+      thumbnailUrl: `https://i.ytimg.com/vi/${candidate.videoId}/hqdefault.jpg`,
       checkedAt: new Date().toISOString(),
       source: "public-live",
       message: "El canal está en vivo ahora.",
@@ -125,20 +202,94 @@ async function checkViaPublicLive(channelId: string): Promise<LiveStatus> {
   );
 }
 
-function decodeHtml(value: string) {
-  return value
-    .replace(/\\u0026/g, "&")
-    .replace(/&amp;/g, "&")
-    .replace(/\\"/g, '"');
+/**
+ * search.list es caro (100 u). Solo como último recurso si scrape no dio candidato
+ * y aún hay cuota. El resultado SE VERIFICA con videos.list + channelId.
+ */
+async function checkViaYoutubeSearch(
+  channelId: string,
+): Promise<LiveStatus | null> {
+  const key = getApiKey();
+  if (!key) return null;
+
+  const url = new URL("https://www.googleapis.com/youtube/v3/search");
+  url.searchParams.set("part", "snippet");
+  url.searchParams.set("channelId", channelId);
+  url.searchParams.set("eventType", "live");
+  url.searchParams.set("type", "video");
+  url.searchParams.set("maxResults", "1");
+  url.searchParams.set("key", key);
+
+  const res = await fetch(url.toString(), { cache: "no-store" });
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as {
+    items?: Array<{
+      id?: { videoId?: string };
+      snippet?: {
+        channelId?: string;
+        title?: string;
+      };
+    }>;
+  };
+
+  const item = data.items?.[0];
+  const videoId = item?.id?.videoId;
+  if (!isValidVideoId(videoId)) {
+    return offlineStatus(
+      "youtube-api",
+      "El canal no está en vivo en este momento.",
+    );
+  }
+
+  // Defensa en profundidad: search a veces es inconsistente; videos.list manda.
+  if (item?.snippet?.channelId && item.snippet.channelId !== channelId) {
+    return offlineStatus(
+      "youtube-api",
+      "El canal no está en vivo en este momento.",
+    );
+  }
+
+  const verified = await verifyVideoForChannel(videoId, channelId);
+  if (!verified?.isLive) {
+    return offlineStatus(
+      "youtube-api",
+      "El canal no está en vivo en este momento.",
+    );
+  }
+
+  return {
+    isLive: true,
+    videoId: verified.videoId,
+    title: verified.title,
+    thumbnailUrl: verified.thumbnailUrl,
+    checkedAt: new Date().toISOString(),
+    source: "youtube-api",
+    message: "El canal está en vivo ahora.",
+  };
 }
 
 async function fetchLiveStatusFromUpstream(): Promise<LiveStatus> {
-  const channelId = siteConfig.youtubeChannelId;
+  const channelId = getChannelId();
+
+  // Guardrail absoluto: nunca operar sobre otro canal.
+  if (channelId !== EVD_YOUTUBE_CHANNEL_ID) {
+    return offlineStatus(
+      "mock",
+      "Canal de YouTube no autorizado para este sitio.",
+    );
+  }
 
   try {
-    const apiResult = await checkViaYoutubeApi(channelId);
-    if (apiResult) return apiResult;
-    return await checkViaPublicLive(channelId);
+    // 1) Scrape estricto + videos.list (barato, evita search.list).
+    const publicResult = await checkViaPublicLive(channelId);
+    if (publicResult.isLive) return publicResult;
+
+    // 2) search.list solo si scrape no vio candidato live (y hay cuota).
+    const searchResult = await checkViaYoutubeSearch(channelId);
+    if (searchResult) return searchResult;
+
+    return publicResult;
   } catch {
     return offlineStatus(
       "mock",
@@ -151,15 +302,23 @@ function isFresh(entry: CacheEntry, now = Date.now()) {
   return now - entry.fetchedAt < LIVE_STATUS_TTL_MS;
 }
 
-/**
- * Consulta real a YouTube. Deduplica refrescos concurrentes
- * y actualiza el caché en memoria.
- */
 async function refreshLiveStatus(): Promise<LiveStatus> {
   if (refreshInFlight) return refreshInFlight;
 
   refreshInFlight = (async () => {
     const status = await fetchLiveStatusFromUpstream();
+    // Nunca cachear un “live” sin videoId válido del canal.
+    if (
+      status.isLive &&
+      (!status.videoId || !isValidVideoId(status.videoId))
+    ) {
+      const safe = offlineStatus(
+        status.source,
+        "No hay transmisión en vivo en este momento.",
+      );
+      cache = { status: safe, fetchedAt: Date.now() };
+      return safe;
+    }
     cache = { status, fetchedAt: Date.now() };
     return status;
   })().finally(() => {
@@ -171,9 +330,9 @@ async function refreshLiveStatus(): Promise<LiveStatus> {
 
 /**
  * Siempre responde con el valor cacheado.
- * - Si el caché está fresco (< 5 min): lo devuelve sin tocar YouTube.
- * - Si está vencido: lo devuelve igual y refresca en segundo plano.
- * - Solo en arranque en frío (sin caché) espera la primera consulta.
+ * - Fresco (< 5 min): sin tocar YouTube.
+ * - Vencido: valor anterior + refresh en background.
+ * - Arranque en frío: espera la primera consulta.
  */
 export async function getLiveStatus(): Promise<LiveStatus> {
   if (cache) {
@@ -196,4 +355,10 @@ export function getLiveStatusCacheMeta() {
         status: cache.status,
       }
     : null;
+}
+
+/** Tests: permite limpiar el caché en memoria. */
+export function __resetLiveStatusCacheForTests() {
+  cache = null;
+  refreshInFlight = null;
 }
