@@ -3,6 +3,10 @@ export const siteConfig = {
   title: "Live Home - Escuela Valores Divinos - LIVE",
   description:
     "Transmisiones en vivo desde la Escuela Valores Divinos. Meditaciones junto a Mataji Shaktiananda.",
+  /** Canonical production URL (absolute OG/Twitter images). */
+  siteUrl: "https://live.evdsky.com",
+  ogImagePath: "/og-image.png",
+  iconPath: "/cropped-logo-EVD-SKY-dodecaedro-192x192.png",
   youtubeChannelId:
     process.env.YOUTUBE_CHANNEL_ID ?? "UCs6BtP_OoMkh18UjszWIuqg",
   youtubeApiKey: process.env.YOUTUBE_API_KEY ?? "",

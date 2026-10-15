@@ -15,29 +15,32 @@ const sans = Montserrat({
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const siteUrl = siteConfig.liveSourceUrl;
+const ogImageUrl = `${siteConfig.siteUrl}${siteConfig.ogImagePath}`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteConfig.siteUrl),
   title: siteConfig.title,
   description: siteConfig.description,
+  applicationName: siteConfig.name,
   icons: {
     icon: [
-      { url: "/cropped-logo-EVD-SKY-dodecaedro-192x192.png", type: "image/png" },
+      { url: siteConfig.iconPath, type: "image/png", sizes: "192x192" },
       { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: "/cropped-logo-EVD-SKY-dodecaedro-192x192.png",
+    apple: [{ url: siteConfig.iconPath, sizes: "192x192", type: "image/png" }],
+    shortcut: siteConfig.iconPath,
   },
   openGraph: {
     type: "website",
     locale: "es_ES",
-    url: siteUrl,
+    url: siteConfig.siteUrl,
     siteName: siteConfig.name,
     title: siteConfig.title,
     description: siteConfig.description,
     images: [
       {
-        url: "/og-image.png",
+        url: ogImageUrl,
+        secureUrl: ogImageUrl,
         width: 1200,
         height: 630,
         alt: "Escuela Valores Divinos · LIVE",
@@ -49,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: ["/og-image.png"],
+    images: [ogImageUrl],
   },
 };
 
