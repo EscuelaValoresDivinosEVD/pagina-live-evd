@@ -15,12 +15,41 @@ const sans = Montserrat({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+const siteUrl = siteConfig.liveSourceUrl;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: siteConfig.title,
   description: siteConfig.description,
   icons: {
-    icon: "/cropped-logo-EVD-SKY-dodecaedro-192x192.png",
+    icon: [
+      { url: "/cropped-logo-EVD-SKY-dodecaedro-192x192.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
     apple: "/cropped-logo-EVD-SKY-dodecaedro-192x192.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "es_ES",
+    url: siteUrl,
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Escuela Valores Divinos · LIVE",
+        type: "image/png",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ["/og-image.png"],
   },
 };
 
